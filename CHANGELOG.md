@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+
+- Adds model for tracking user submitted decks.
+
 ## [v7.11.6](https://github.com/lexicalunit/spellbot/releases/tag/v7.11.6) - 2022-01-12
 
 ### Added

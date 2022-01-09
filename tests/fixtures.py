@@ -29,6 +29,7 @@ from tests.factories import (
     BlockFactory,
     ChannelFactory,
     ConfigFactory,
+    DeckFactory,
     GameFactory,
     GuildAwardFactory,
     GuildFactory,
@@ -45,6 +46,7 @@ class Factories:
     block = BlockFactory
     channel = ChannelFactory
     config = ConfigFactory
+    deck = DeckFactory
     game = GameFactory
     guild = GuildFactory
     guild_award = GuildAwardFactory
@@ -74,6 +76,7 @@ async def _session_context_manager(nosession: bool = False) -> AsyncGenerator[No
     BlockFactory._meta.sqlalchemy_session = DatabaseSession  # type: ignore
     ChannelFactory._meta.sqlalchemy_session = DatabaseSession  # type: ignore
     ConfigFactory._meta.sqlalchemy_session = DatabaseSession  # type: ignore
+    DeckFactory._meta.sqlalchemy_session = DatabaseSession  # type: ignore
     GameFactory._meta.sqlalchemy_session = DatabaseSession  # type: ignore
     GuildAwardFactory._meta.sqlalchemy_session = DatabaseSession  # type: ignore
     GuildFactory._meta.sqlalchemy_session = DatabaseSession  # type: ignore

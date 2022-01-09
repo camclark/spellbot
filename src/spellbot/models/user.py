@@ -16,7 +16,7 @@ from sqlalchemy.orm import relationship
 from . import Base, Config, GameStatus, Play, now
 
 if TYPE_CHECKING:  # pragma: no cover
-    from . import Game  # noqa
+    from . import Deck, Game  # noqa
 
 
 class User(Base):
@@ -63,6 +63,13 @@ class User(Base):
         nullable=True,
         index=True,
         doc="The game ID that this user is current signed up for",
+    )
+
+    decks = relationship(
+        "Deck",
+        uselist=True,
+        back_populates="user",
+        doc="The decks this user has created",
     )
 
     game = relationship(

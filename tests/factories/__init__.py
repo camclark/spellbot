@@ -2,6 +2,7 @@ from .award import GuildAwardFactory, UserAwardFactory
 from .block import BlockFactory
 from .channel import ChannelFactory
 from .config import ConfigFactory
+from .deck import DeckFactory
 from .game import GameFactory
 from .guild import GuildFactory
 from .play import PlayFactory
@@ -13,6 +14,7 @@ __all__ = [
     "BlockFactory",
     "ChannelFactory",
     "ConfigFactory",
+    "DeckFactory",
     "GameFactory",
     "GuildAwardFactory",
     "GuildFactory",

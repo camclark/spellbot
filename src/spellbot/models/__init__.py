@@ -22,6 +22,7 @@ from .award import GuildAward, UserAward
 from .block import Block
 from .channel import Channel
 from .config import Config
+from .deck import Deck
 from .game import Game, GameFormat, GameStatus
 from .guild import Guild
 from .play import Play
@@ -35,6 +36,7 @@ __all__ = [
     "Channel",
     "Config",
     "create_all",
+    "Deck",
     "Game",
     "GameFormat",
     "GameStatus",
