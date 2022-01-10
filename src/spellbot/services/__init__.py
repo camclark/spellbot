@@ -5,6 +5,7 @@ from .channels import ChannelsService
 from .configs import ConfigsService
 from .games import GamesService
 from .guilds import GuildsService
+from .metas import MetasService
 from .plays import PlaysService
 from .users import UsersService
 from .verifies import VerifiesService
@@ -18,6 +19,7 @@ class ServicesRegistry:
         self.configs = ConfigsService()
         self.games = GamesService()
         self.guilds = GuildsService()
+        self.metas = MetasService()
         self.plays = PlaysService()
         self.users = UsersService()
         self.verifies = VerifiesService()
@@ -30,6 +32,7 @@ __all__ = [
     "ConfigsService",
     "GamesService",
     "GuildsService",
+    "MetasService",
     "NewAward",
     "PlaysService",
     "ServicesRegistry",
