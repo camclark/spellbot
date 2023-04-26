@@ -10,6 +10,10 @@ from . import BaseView
 
 
 class PendingGameView(BaseView):
+    def __init__(self, bot: SpellBot, startable: bool = False) -> None:
+        super().__init__(bot)
+        self.add_item(StartGameButton(self.bot, disabled=not startable))
+
     @ui.button(
         custom_id="join",
         emoji="✋",
@@ -26,7 +30,6 @@ class PendingGameView(BaseView):
         assert interaction.channel_id is not None
         with tracer.trace(name="interaction", resource="join"):  # type: ignore
             add_span_context(interaction)
-            assert interaction.original_response
             await interaction.response.defer()
             async with self.bot.channel_lock(interaction.channel_id):
                 async with LookingForGameAction.create(self.bot, interaction) as action:
@@ -53,6 +56,30 @@ class PendingGameView(BaseView):
             async with self.bot.channel_lock(interaction.channel_id):
                 async with LeaveAction.create(self.bot, interaction) as action:
                     await action.execute(origin=True)
+
+
+class StartGameButton(ui.Button[PendingGameView]):
+    def __init__(self, bot: SpellBot, disabled: bool) -> None:
+        self.bot = bot
+        super().__init__(
+            custom_id="start",
+            emoji="🚀",
+            label="Start",
+            style=discord.ButtonStyle.green,
+            disabled=disabled,
+        )
+
+    async def callback(self, interaction: discord.Interaction) -> None:
+        from ..actions import LookingForGameAction
+
+        assert interaction.channel_id is not None
+        with tracer.trace(name="interaction", resource="leave"):  # type: ignore
+            add_span_context(interaction)
+            await interaction.response.defer()
+            async with self.bot.channel_lock(interaction.channel_id):
+                async with LookingForGameAction.create(self.bot, interaction) as action:
+                    original_response = await interaction.original_response()
+                    await action.start(interaction.user.id, original_response.id)
 
 
 class StartedGameView(BaseView):

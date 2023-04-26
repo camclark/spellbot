@@ -115,12 +115,13 @@ class LookingForGameAction(BaseAction):
             ):
                 embed = await self.services.games.to_embed()
                 fully_seated = await self.services.games.fully_seated()
+                startable = await self.services.games.startable()
                 view: Optional[BaseView] = None
                 if fully_seated:
                     if self.channel_data.get("show_points", False):
                         view = StartedGameView(bot=self.bot)
                 else:
-                    view = PendingGameView(bot=self.bot)
+                    view = PendingGameView(bot=self.bot, startable=startable)
                 await safe_update_embed(
                     message,
                     embed=embed,
@@ -131,6 +132,21 @@ class LookingForGameAction(BaseAction):
 
         await self.services.games.add_player(self.interaction.user.id)
         return False
+
+    @tracer.wrap()
+    async def start(self, user_xid: int, message_xid: int) -> None:
+        assert self.interaction.guild_id is not None
+        await self.services.games.select_by_message_xid(message_xid)
+        if not await self.services.games.startable():
+            return
+        if user_xid not in await self.services.games.player_xids():
+            return
+        await self.services.games.start_game()
+        await self._handle_link_creation()
+        await self._handle_voice_creation(self.interaction.guild_id)
+        await self._handle_embed_creation(new=False, origin=True, fully_seated=True)
+        await self.services.games.record_plays()
+        await self._handle_direct_messages()
 
     @tracer.wrap()
     async def execute(
@@ -311,7 +327,8 @@ class LookingForGameAction(BaseAction):
             if self.channel_data.get("show_points", False):
                 view = StartedGameView(bot=self.bot)
         else:
-            view = PendingGameView(bot=self.bot)
+            startable = await self.services.games.startable()
+            view = PendingGameView(bot=self.bot, startable=startable)
 
         if new:  # create the initial game post:
             if message := await safe_followup_channel(self.interaction, embed=embed, view=view):

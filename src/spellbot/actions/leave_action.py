@@ -12,6 +12,7 @@ from ..operations import (
     safe_update_embed,
     safe_update_embed_origin,
 )
+from ..views import PendingGameView
 from .base_action import BaseAction
 
 logger = logging.getLogger(__name__)
@@ -39,7 +40,9 @@ class LeaveAction(BaseAction):
 
         await self.services.users.leave_game()
         embed = await self.services.games.to_embed()
-        await safe_update_embed_origin(self.interaction, embed=embed)
+        startable = await self.services.games.startable()
+        view = PendingGameView(bot=self.bot, startable=startable)
+        await safe_update_embed_origin(self.interaction, embed=embed, view=view)
 
     async def _removed(self) -> None:
         # Note: Ok to use safe_send_channel() so long as this is not an origin context!

@@ -218,6 +218,13 @@ class GamesService:
 
     @sync_to_async
     @tracer.wrap()
+    def startable(self) -> bool:
+        assert self.game
+        rows = DatabaseSession.query(User).filter(User.game_id == self.game.id).count()
+        return rows >= 2
+
+    @sync_to_async
+    @tracer.wrap()
     def make_ready(self, spelltable_link: Optional[str]) -> None:
         assert self.game
         assert len(spelltable_link or "") <= MAX_SPELLTABLE_LINK_LEN
@@ -412,4 +419,11 @@ class GamesService:
             update(Game).where(Game.id.in_(game_ids)).values(deleted_at=datetime.now(tz=pytz.utc))
         )
         DatabaseSession.execute(query)
+        DatabaseSession.commit()
+
+    @sync_to_async
+    @tracer.wrap()
+    def start_game(self) -> None:
+        assert self.game
+        self.game.seats = len(self.game.players)  # type: ignore
         DatabaseSession.commit()
